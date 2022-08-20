@@ -3,19 +3,8 @@ import util, { format } from 'util'
 import multer from 'multer'
 import { Storage } from '@google-cloud/storage'
 import { GeneralError } from '../../common/errors'
-import File from './files-model'
+import FileCollection from './files-model'
 
-const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID // Get this from Google Cloud
-const keyFilename = 'config/googleCloudKey.json'// Get this from Google Cloud -> Credentials -> Service Accounts
-
-// Instantiate a storage client with credentials
-const storage = new Storage({
-  projectId,
-  keyFilename
-})
-
-// A bucket is a container for objects (files).
-export const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET)
 const fileSize = process.env.MAX_FILE_SIZE || 2
 const maxSize = fileSize * 1024 * 1024
 const hasCloudStorage = !!process.env.GOOGLE_CLOUD_PROJECT_ID
@@ -43,6 +32,17 @@ export const uploadFileToGoogleCloudStorage = (req, res, tokens) => {
   const { file } = req
   const fileName = file ? file.originalname : ''
 
+  const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID // Get this from Google Cloud
+  const keyFilename = 'config/googleCloudKey.json'// Get this from Google Cloud -> Credentials -> Service Accounts
+
+  // Instantiate a storage client with credentials
+  const storage = new Storage({
+    projectId,
+    keyFilename
+  })
+
+  // A bucket is a container for objects (files).
+  const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET)
   // Create a new blob in the bucket and upload the file data.
   const blob = bucket.file(fileName)
   const blobStream = blob.createWriteStream()
@@ -77,6 +77,10 @@ export const uploadFileToGoogleCloudStorage = (req, res, tokens) => {
 }
 
 export const getAFile = async (query) => {
-  const file = await File.findOne(query)
+  const file = await FileCollection.findOne(query)
   return file
+}
+export const getFiles = async (query) => {
+  const files = await FileCollection.find(query)
+  return files || []
 }

@@ -1,21 +1,21 @@
 import format from 'util'
 import fs from 'fs'
-import { BadRequest, GeneralError, NotFound } from '../../common/errors'
+import { GeneralError, NotFound } from '../../common/errors'
 import { fileHelper } from '../helpers'
-import File from './files-model'
+import FileCollection from './files-model'
 
 export const createAFile = async (fileData) => {
-  const file = await File.create(fileData)
+  const file = await FileCollection.create(fileData)
   return file
 }
 
 export const deleteAFile = async (query) => {
-  const files = await File.deleteMany(query)
+  const files = await FileCollection.deleteMany(query)
   return files
 }
 
 export const deleteFiles = async (query) => {
-  const files = await File.deleteMany(query)
+  const files = await FileCollection.deleteMany(query)
   return files
 }
 
@@ -124,22 +124,22 @@ export const googleCloudStorage = {
 export const removeInactiveFiles = async () => {
   console.log('Started remove inactive file job', new Date())
   try {
-    const maxTime = process.env.REMOVE_MAX_AGED_FILE_TIME ? parseInt(process.env.REMOVE_MAX_AGED_FILE_TIME) : 24 * 60 * 60 * 1000
+    const maxTime = process.env.REMOVE_MAX_AGED_FILE_TIME ? 60 : 24 * 60 * 60 * 1000
     const fileQuery = { createdAt: { $lt: new Date(Date.now() - maxTime) } }
-    const files = await fileHelper.getAFile(fileQuery)
+    const files = await fileHelper.getFiles(fileQuery)
     await deleteFiles(fileQuery) //remove files from database
-
     // remove files from local storage
     if (files && files.length) {
       for (const file of files) {
         try {
-          fs.unlinkSync(`${__dirname}/../../../assets/upload/${file.path}`);
-          console.log(`Successfully deleted ${file.name}`);
+          fs.unlinkSync(`assets/upload/${file.path}`);
+          console.log(`Successfully removed ${file.name}`);
         } catch (err) {
           console.log(`Error while deleting file ${err} `);
         }
       }
     }
+    console.log(`Finished removing inactive files`, new Date());
   } catch (error) {
     console.log('Job failed!', error);
     return false

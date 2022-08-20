@@ -44,7 +44,8 @@ MONGO_DB_URL=mongodb://localhost:27017/fileStorageApi
 MONGO_DB_TEST_URL=mongodb://localhost:27017/testFileStorageApi
 
 #old file remove, 1d
-REMOVE_MAX_AGED_FILE_TIME= 24 * 60 * 60 * 1000
+FILE_REMOVE_PERIOD = '59 59 23 * * *'
+REMOVE_MAX_AGED_FILE_TIME = 1 * 60 * 60 * 1000
 MAX_FILE_SIZE=2
 
 #limit each IP to 500 requests per windowMs

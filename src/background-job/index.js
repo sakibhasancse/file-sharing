@@ -1,6 +1,8 @@
 import cronJob from 'node-cron'
 import { removeInactiveFiles } from '../modules/files/files-service';
 
-console.log("Star")
-const job = cronJob.schedule('59 59 23 * * *', removeInactiveFiles);
+const job = cronJob.schedule(process.env.FILE_REMOVE_PERIOD, removeInactiveFiles, null,
+  false,
+  'America/Los_Angeles'
+);
 module.exports = job

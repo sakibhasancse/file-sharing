@@ -1,14 +1,14 @@
-import File from '../../modules/files/files-model'
+import FileCollection from '../../modules/files/files-model'
 import fs from 'fs'
 
 
 export const createAFile = async (fileData) => {
-    const file = await File.create(fileData)
+    const file = await FileCollection.create(fileData)
     return file
 }
 
 export const cleanFiles = async () => {
-    const files = await File.deleteMany({})
+    const files = await FileCollection.deleteMany({})
     return files
 }
 

@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import { handleError } from './common/middlewares'
 import { setup } from './core'
 dotenv.config()
-// import './background-job'
+import './background-job'
 
 const start = async () => {
   try {
