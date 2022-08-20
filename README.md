@@ -3,54 +3,18 @@
 
 <h1 align="center">file-sharing-server</h1>
 
-<p align="center">
-  <img alt="Github top language" src="https://img.shields.io/github/languages/top/sakibhasancse/file-sharing-server?color=56BEB8">
-
-  <img alt="Github language count" src="https://img.shields.io/github/languages/count/sakibhasancse/file-sharing-server?color=56BEB8">
-
-  <img alt="Repository size" src="https://img.shields.io/github/repo-size/sakibhasancse/file-sharing-server?color=56BEB8">
-
-  <img alt="License" src="https://img.shields.io/github/license/sakibhasancse/file-sharing-server?color=56BEB8">
-
-  <img alt="Github issues" src="https://img.shields.io/github/issues/sakibhasancse/file-sharing-server?color=56BEB8" />
-
-  <img alt="Github forks" src="https://img.shields.io/github/forks/sakibhasancse/file-sharing-server?color=56BEB8" />
-
-   <img alt="Github stars" src="https://img.shields.io/github/stars/sakibhasancse/file-sharing-server?color=56BEB8" />
-</p>
-
-Status
-
-<h4 align="center"> 
-	🚧  file-sharing-server 🚀 Under construction...  🚧
-</h4>
-
 <hr>
-
-<p align="center">
-  <a href="#dart-about">About</a> &#xa0; | &#xa0; 
-  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
-  <a href="#rocket-technologies">Technologies</a> &#xa0; | &#xa0;
-  <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
-  <a href="#checkered_flag-starting">Starting</a> &#xa0; | &#xa0;
-  <a href="https://github.com/sakibhasancse" target="_blank">Author</a>
-</p>
-
-<br>
-
-## :dart: About
-
-Describe your project
 
 ## :sparkles: Features
 
-:heavy_check_mark: User authentication system;\
-:heavy_check_mark: File shearing;\
-:heavy_check_mark: FIle upload and download file;
+:heavy_check_mark: File shearing;
+:heavy_check_mark: File upload;
+:heavy_check_mark: File Download;
+:heavy_check_mark: File Remove;
 
 ## :rocket: Technologies
 
-The following tools were used in this project:
+The following tools is used in this project:
 
 - [Express](https://expressjs.com/)
 - [Node.js](https://nodejs.org/en/)
@@ -69,25 +33,31 @@ $ git clone https://github.com/sakibhasancse/file-sharing-server
 
 # Access
 $ cd file-sharing-server
-
-# The server will initialize in the <http://localhost:3000>
-
 ```
 
 :Environment variable setup
+
 ```shell
 PORT=3000
 MONGO_DB_URL=mongodb://localhost:27017/fileStorageApi
 
+MONGO_DB_TEST_URL=mongodb://localhost:27017/testFileStorageApi
+
 #old file remove, 1d
 REMOVE_MAX_AGED_FILE_TIME= 24 * 60 * 60 * 1000
+MAX_FILE_SIZE=2
+
+#limit each IP to 500 requests per windowMs
+REQUEST_TIME = 15 * 60 * 1000 
+REQUEST_LIMIT = 500 
 
 #google cloud storage, under construction
 #GOOGLE_CLOUD_PROJECT_ID
-#GOOGLE_CLOUD_KEYFILE 
+#GOOGLE_CLOUD_KEYFILE
 ```
 
 :Start project
+
 ```shell
 # Install dependencies
 $ yarn
@@ -95,7 +65,19 @@ $ yarn
 # Run the project
 $ yarn start
 
+# The server will initialize in the <http://localhost:3000>
 ```
+
+:Test project
+
+```shell
+
+# Run test case
+$ npm run test
+
+# The server will initialize in the <http://localhost:3000>
+```
+
 Made with :heart: by <a href="https://github.com/sakibhasancse" target="_blank">Sakib Hasan</a>
 
 &#xa0;
