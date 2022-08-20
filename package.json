@@ -1,0 +1,66 @@
+{
+  "name": "fileSharingAPIServer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon -r esm src/server.js | pino-pretty -c -L",
+    "dev": "nodemon -r esm src/server.js",
+    "babel:clear": "rm -rf ./node_modules/.cache/@babel/register",
+    "test": "npm run babel:clear && NODE_ENV=test USE_DEMO_USER=true mocha --require ./utils/babel-register --timeout 30000 ./src/tests/**/*.js --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakibhasancse/file-sharing-server.git"
+  },
+  "keywords": [
+    "nodejs",
+    "upload",
+    "file",
+    "google cloud storage",
+    "rest api"
+  ],
+  "author": "sakibhasancse",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sakibhasancse/file-sharing-server/issues"
+  },
+  "homepage": "https://github.com/sakibhasancse/file-sharing-server#readme",
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "@babel/cli": "^7.17.6",
+    "@google-cloud/storage": "^5.18.2",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "esm": "^3.2.25",
+    "express": "^4.17.3",
+    "express-pino-logger": "^7.0.0",
+    "express-rate-limit": "^6.3.0",
+    "helmet": "^5.0.2",
+    "mongoose": "^6.2.6",
+    "multer": "^1.4.4",
+    "nid": "^2.0.0",
+    "node-cron": "^3.0.2",
+    "pino": "^7.9.1",
+    "pino-pretty": "^7.5.4",
+    "winston": "^3.6.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.8",
+    "@babel/node": "^7.16.8",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/register": "^7.17.7",
+    "@babel/runtime": "^7.17.8",
+    "babel-jest": "^27.5.1",
+    "chai": "^4.3.6",
+    "jest": "^27.5.1",
+    "mocha": "^9.2.2",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.2"
+  }
+}
