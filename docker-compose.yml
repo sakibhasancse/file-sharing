@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  appserver:
+    image: appserver:pi
+    container_name: appserver
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8002:8002
+    environment:
+      - DEBUG=1
+      - NODE_ENV=production
+      - PORT=8002
+      - MONGODB_CLOUD_URL=mongodb://localhost:27017/fileStorageApi
