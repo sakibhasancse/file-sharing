@@ -10,7 +10,7 @@ describe('Test for file upload', () => {
     await cleanFilesDataForTest()
   })
 
-  it("Should throw an error, without attach file", async () => {
+  it("Should throw an error, if a file is not attached", async () => {
     const { status, text } = await request.post('/api/files/')
     const result = JSON.parse(text)
     const { message } = result
@@ -18,7 +18,7 @@ describe('Test for file upload', () => {
     expect(status).to.equal(404)
   });
 
-  it('Should return 201 and upload a file', async () => {
+  it('Should upload a file', async () => {
     const { status, text } = await request
       .post('/api/files/')
       .attach('file', fs.readFileSync('src/tests/test-helper/testFile.txt'), 'testFile.txt')
@@ -28,6 +28,7 @@ describe('Test for file upload', () => {
     expect(message).to.equal('File uploaded successfully');
     expect(status).to.equal(201)
 
+    //Checking file data
     const { privateKey, publicKey, name } = data
     file = data
     expect(data).to.be.a('object')
@@ -36,7 +37,7 @@ describe('Test for file upload', () => {
     expect(name).to.equal('testFile.txt')
   })
 
-  it("shouldn't download a file using wrong key", async () => {
+  it("shouldn't download a file using an invalid key", async () => {
     const response = await request
       .get('/api/files/test')
 
@@ -49,12 +50,10 @@ describe('Test for file upload', () => {
     const response = await request
       .get(`/api/files/${file.publicKey}`)
 
-    const result = JSON.parse(response?.text)
-    console.log({ response, result })
     expect(response.buffered).to.be.true
-    expect(result).to.equal("Hello, This is a test file")
+    expect(response.text).to.equal("Hello, This is a test file")
   })
-  it("shouldn't remove a file using wrong key", async () => {
+  it("shouldn't remove a file using an invalid key", async () => {
     const response = await request
       .delete('/api/files/wrong-test-key')
     const result = JSON.parse(response.text)

@@ -33,8 +33,7 @@ const multerStorage = multer.diskStorage({
 })
 
 const multerConfig = multer({
-  // storage: hasCloudStorage ? multer.memoryStorage() : multerStorage,
-  storage: multerStorage,
+  storage: hasCloudStorage ? multer.memoryStorage() : multerStorage,
   limits: { fileSize: maxSize }
 }).single('file')
 
