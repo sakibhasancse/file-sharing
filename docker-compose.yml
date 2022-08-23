@@ -1,15 +1,35 @@
-version: "3.8"
+version: "3.9"
 services:
-  appserver:
-    image: appserver:pi
-    container_name: appserver
-    build:
-      context: .
-      dockerfile: Dockerfile
+  #MongoDb Service
+  mongodb:
+    container_name: database
+    image: mongo:latest
+    restart: always
+    # ports:
+    #   - 27017:27017
+    volumes:
+      - mongodb:/data/db
+  #App service
+  app:
+    build: .
     ports:
-      - 8002:8002
+      - 8080:8080
     environment:
-      - DEBUG=1
-      - NODE_ENV=production
-      - PORT=8002
-      - MONGODB_CLOUD_URL=mongodb://localhost:27017/fileStorageApi
+      NODE_ENV: production
+      PORT: 8080
+      MONGO_DB_URL: mongodb://database:27017/fileStorageApi
+      MONGO_DB_TEST_URL: mongodb://database:27017/testFileStorageApi
+      MAX_FILE_SIZE: 2
+      FILE_REMOVE_PERIOD: 59 59 23 * * *
+      REMOVE_MAX_AGED_FILE_TIME: 1 * 60 * 60 * 1000
+      REQUEST_TIME: 15 * 60 * 1000
+      REQUEST_LIMIT: 500
+      GCLOUD_PROJECT_ID:
+      GCLOUD_STORAGE_BUCKET:
+      GCLOUD_EMAIL_CLIENT:
+      GCLOUD_PRIVATE_KEY:
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb: {}

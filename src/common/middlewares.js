@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import { GeneralError, BadRequest } from './errors'
+import { GeneralError } from './errors'
 
 export const handleError = async (err, req, res, next) => {
   if (!res) return

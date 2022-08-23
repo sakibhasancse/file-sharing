@@ -48,8 +48,8 @@ REMOVE_MAX_AGED_FILE_TIME = 1 * 60 * 60 * 1000
 MAX_FILE_SIZE=2
 
 #limit each IP to 500 requests per windowMs
-REQUEST_TIME = 15 * 60 * 1000 
-REQUEST_LIMIT = 500 
+REQUEST_TIME = 15 * 60 * 1000
+REQUEST_LIMIT = 500
 
 #setup google cloud storage
 GCLOUD_PROJECT_ID=
@@ -71,15 +71,19 @@ $ yarn start
 # The server will initialize in the <http://localhost:3000>
 ```
 
-:Test project
+:Test case
 
 ```shell
 
 # Run test case
 $ npm run test
-
-# The server will initialize in the <http://localhost:3000>
 ```
+
+:Using Docker
+
+Install Docker on your machine.
+Build your container: ```docker-compose build```
+Up your container: ```docker-compose up```
 
 Made with :heart: by <a href="https://github.com/sakibhasancse" target="_blank">Sakib Hasan</a>
 

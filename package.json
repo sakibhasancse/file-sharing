@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon -r esm src/server.js | pino-pretty -c -L",
+    "start": "node -r esm src/server.js | pino-pretty -c -L",
     "dev": "nodemon -r esm src/server.js",
     "babel:clear": "rm -rf ./node_modules/.cache/@babel/register",
     "test": "npm run babel:clear && NODE_ENV=test mocha --require ./utils/babel-register --timeout 30000 ./src/tests/**/*.js --exit"
