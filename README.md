@@ -81,9 +81,16 @@ $ npm run test
 
 :Using Docker
 
-Install Docker on your machine.
-Build your container: ```docker-compose build```
-Up your container: ```docker-compose up```
+Install Docker on your machine
+```shell 
+ #Build your container
+ $ docker-compose build
+ #Up your container
+ $ docker-compose up 
+ #or
+ $ docker-compose up -d  
+``` 
+
 
 Made with :heart: by <a href="https://github.com/sakibhasancse" target="_blank">Sakib Hasan</a>
 
