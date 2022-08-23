@@ -7,7 +7,7 @@
     "start": "nodemon -r esm src/server.js | pino-pretty -c -L",
     "dev": "nodemon -r esm src/server.js",
     "babel:clear": "rm -rf ./node_modules/.cache/@babel/register",
-    "test": "npm run babel:clear && NODE_ENV=test USE_DEMO_USER=true mocha --require ./utils/babel-register --timeout 30000 ./src/tests/**/*.js --exit"
+    "test": "npm run babel:clear && NODE_ENV=test mocha --require ./utils/babel-register --timeout 30000 ./src/tests/**/*.js --exit"
   },
   "repository": {
     "type": "git",
@@ -51,13 +51,13 @@
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/node": "^7.16.8",
-    "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.16.11",
     "@babel/register": "^7.17.7",
     "@babel/runtime": "^7.17.8",
     "babel-jest": "^27.5.1",
     "chai": "^4.3.6",
+    "chai-files": "^1.4.0",
     "jest": "^27.5.1",
     "mocha": "^9.2.2",
     "nodemon": "^2.0.15",

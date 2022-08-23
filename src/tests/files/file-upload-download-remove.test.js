@@ -1,8 +1,13 @@
-import { expect } from 'chai'
+import chai, { expect } from 'chai'
+import chaiFiles from 'chai-files'
 import fs from 'fs'
 const { setupDB, request } = require('../setup')
 import { cleanFilesDataForTest } from './file-helper'
 setupDB()
+
+
+chai.use(chaiFiles);
+var chaiFile = chaiFiles.file;
 
 describe('Test for file upload', () => {
   let file = {}
@@ -29,12 +34,13 @@ describe('Test for file upload', () => {
     expect(status).to.equal(201)
 
     //Checking file data
-    const { privateKey, publicKey, name } = data
+    const { privateKey, publicKey, name, path } = data
     file = data
     expect(data).to.be.a('object')
     expect(privateKey).to.be.a.string
     expect(publicKey).to.be.a.string
-    expect(name).to.equal('testFile.txt')
+    expect(name).to.be.a.string
+    expect(chaiFile(`assets/upload/${path}`)).to.exist;
   })
 
   it("shouldn't download a file using an invalid key", async () => {
@@ -63,13 +69,12 @@ describe('Test for file upload', () => {
   })
 
   it('should remove a file', async () => {
-
     const response = await request
       .delete(`/api/files/${file.privateKey}`)
 
     const result = JSON.parse(response?.text)
     expect(response.status).to.equal(200)
     expect(result.message).to.equal('File successfully removed')
-
+    expect(chaiFile(`assets/upload/${file.path}`)).to.not.exist;
   })
 })

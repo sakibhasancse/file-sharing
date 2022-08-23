@@ -53,7 +53,8 @@ const logger = ExpressPinoLogger({
         'x-correlation-id': res.headers['x-correlation-id']
       }
     })
-  }
+  },
+  enabled: process.env.NODE_ENV !== 'test'
 })
 
 // Allow Cross-Origin requests

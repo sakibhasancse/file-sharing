@@ -1,8 +1,9 @@
-import format from 'util'
 import fs from 'fs'
+import nid from 'nid'
 import { GeneralError, NotFound } from '../../common/errors'
 import { fileHelper } from '../helpers'
 import FileCollection from './files-model'
+import { getGoogleCloudBucket, hasCloudStorage } from './files-helper'
 
 export const createAFile = async (fileData) => {
   const file = await FileCollection.create(fileData)
@@ -19,18 +20,17 @@ export const deleteFiles = async (query) => {
   return files
 }
 
-
 export const uploadFile = async (req, res, next) => {
   try {
-    const { body = {} } = req
     // File process and save the file
     await fileHelper.processFile(req, res)
 
     const { file } = req
     if (!file) throw new NotFound('File is required')
 
+    const newFileName = nid(17) + file.originalname
     const fileData = {
-      name: body.title ? body.title : file.originalname,
+      name: newFileName,
       size: file.size,
       path: file.filename
     }
@@ -38,13 +38,10 @@ export const uploadFile = async (req, res, next) => {
     // File save to database
     const newFile = await createAFile(fileData)
     if (!newFile) throw new GeneralError('Failed to save the file')
-
     // Upload file to google storage
-    // if (process.env.GOOGLE_CLOUD_PROJECT_ID) {
-    //   const fileUrl = await uploadFileToGoogleCloudStorage(req, res, tokens)
-    //   if (fileUrl) newFile.fileUrl = fileUrl
-    // }
-
+    if (hasCloudStorage()) {
+      await uploadFileToGoogleCloudStorage(req, newFileName)
+    }
     return newFile
   } catch (err) {
     next(err)
@@ -59,65 +56,33 @@ export const deleteFile = async (req, res, next) => {
     if (!file) throw new NotFound('File not found')
 
     await deleteAFile({ privateKey })
-    await fs.unlinkSync(`${__dirname}/../../../assets/upload/${file.path}`)
-    // if (process.env.GOOGLE_CLOUD_PROJECT_ID)  await googleCloudStorage.fileDeleteasync(req, res)
+    if (hasCloudStorage()) await deleteFileFromGCloud(file.name)
+    else await fs.unlinkSync(`${__dirname}/../../../assets/upload/${file.path}`)
     return file
   } catch (err) {
     next(err)
   }
 }
 
-export const googleCloudStorage = {
-  fileUpload: (req, res) => {
-    // Create a new blob in the bucket and upload the file data.
-    const blob = fileHelper.bucket.file(req.file.originalname)
-    const blobStream = blob.createWriteStream({
-      resumable: false
-    })
-    blobStream.on('error', (err) => {
-      res.status(500).send({ message: err.message })
-    })
-    blobStream.on('finish', async (data) => {
-      // Create URL for directly file access via HTTP.
-      const publicUrl = format(
-        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
-      )
-      try {
-        // Make the file public
-        await bucket.file(req.file.originalname).makePublic()
-      } catch {
-        return res.status(500).send({
-          message:
-            `Uploaded the file successfully: ${req.file.originalname}, but public access is denied!`,
-          url: publicUrl
-        })
-      }
-      res.status(200).send({
-        message: 'Uploaded the file successfully: ' + req.file.originalname,
-        url: publicUrl
-      })
-    })
-    blobStream.end(req.file.buffer)
-  },
-  fileDownload: async (req, res) => {
-    const [metaData] = await bucket.file(req.params.name).getMetadata()
-    res.redirect(metaData.mediaLink)
-  },
-  fileDelete: async (req, res) => {
-    const [metaData] = await bucket.file(req.params.name).getMetadata()
-    res.redirect(metaData.mediaLink)
-  },
-  fileList: async (req, res) => {
-    const [files] = await bucket.getFiles()
-    const fileInfos = []
-    files.forEach((file) => {
-      fileInfos.push({
-        name: file.name,
-        url: file.metadata.mediaLink
-      })
-    })
-    res.status(200).send(fileInfos)
-  }
+export const uploadFileToGoogleCloudStorage = async (req, newFileName) => {
+  const bucket = await getGoogleCloudBucket()
+  // Create a new blob in the bucket and upload the file data.
+  const blob = bucket.file(newFileName)
+  const blobStream = blob.createWriteStream()
+  blobStream.on('error', err => { throw new GeneralError('Filed to upload the file', err) })
+  blobStream.on('finish', async (data) => data)
+  blobStream.end(req.file.buffer)
+}
+
+export const downloadFileFromGCloud = async (res, filePath) => {
+  const bucket = await getGoogleCloudBucket()
+  const [metaData] = await bucket.file(filePath).getMetadata()
+  res.redirect(metaData.mediaLink)
+}
+
+export const deleteFileFromGCloud = async (filename) => {
+  const bucket = await getGoogleCloudBucket().file(filename).delete();
+  return bucket
 }
 
 // remove olds file
@@ -132,7 +97,9 @@ export const removeInactiveFiles = async () => {
     if (files && files.length) {
       for (const file of files) {
         try {
-          fs.unlinkSync(`assets/upload/${file.path}`);
+          if (hasCloudStorage()) {
+            await deleteFileFromGCloud(file.name)
+          } else fs.unlinkSync(`assets/upload/${file.path}`);
           console.log(`Successfully removed ${file.name}`);
         } catch (err) {
           console.log(`Error while deleting file ${err} `);

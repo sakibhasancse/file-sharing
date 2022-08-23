@@ -2,6 +2,8 @@
 import { NotFound } from '../../common/errors'
 import { fileHelper } from '../helpers'
 import { fileService } from '../services'
+import { hasCloudStorage } from './files-helper'
+import { downloadFileFromGCloud } from './files-service'
 
 export const uploadFile = async (req, res, next) => {
   const file = await fileService.uploadFile(req, res, next)
@@ -15,14 +17,13 @@ export const uploadFile = async (req, res, next) => {
 export const downloadFile = async (req, res, next) => {
   try {
     const { publicKey } = req.params
-
     const file = await fileHelper.getAFile({ publicKey })
     if (!file) throw new NotFound("File not found")
 
     const filePath = `${__dirname}/../../../assets/upload/${file.path}`
-    res.download(filePath)
 
-    // if(process.env.GOOGLE_CLOUD_PROJECT_ID) await googleCloudStorage.fileDownloadasync(req, res)
+    if (hasCloudStorage()) await downloadFileFromGCloud(res, file.name)
+    else res.download(filePath)
   } catch (err) {
     next(err)
   }

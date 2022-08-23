@@ -1,6 +1,5 @@
-import FileCollection from '../../modules/files/files-model'
 import fs from 'fs'
-
+import FileCollection from '../../modules/files/files-model'
 
 export const createAFile = async (fileData) => {
     const file = await FileCollection.create(fileData)
